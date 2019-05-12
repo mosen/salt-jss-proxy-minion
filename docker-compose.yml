@@ -1,0 +1,28 @@
+version: '3'
+services:
+  master:
+    image: mosen/salt-jss-proxy-minion:latest
+    build:
+      context: .
+    ports:
+      - "14505:4505"
+      - "14506:4506"
+    volumes:
+      - "./master.d/master.conf:/etc/salt/master.d/master.conf:ro"
+      - "./srv/pillar:/srv/pillar:ro"
+    networks:
+      salt:
+        aliases:
+          - salt
+
+  proxy:
+    image: mosen/salt-jss-proxy-minion:latest
+    build:
+      context: .
+    environment:
+      - "SALT_PROXY_ID=something.jamfcloud.com"
+    networks:
+      - salt
+
+networks:
+  salt:
