@@ -19,10 +19,24 @@ services:
     image: mosen/salt-jss-proxy-minion:latest
     build:
       context: .
+    volumes:
+      - "./minion.d/elasticsearch.conf:/etc/salt/minion.d/elasticsearch.conf:ro"
     environment:
       - "SALT_PROXY_ID=something.jamfcloud.com"
     networks:
       - salt
+
+  elastic:
+    image: elasticsearch:7.0.1
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - "discovery.type=single-node"
+    networks:
+      salt:
+        aliases:
+          - elasticsearch
 
 networks:
   salt:
